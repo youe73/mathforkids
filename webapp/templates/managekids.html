@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% if current_user.is_authenticated %}
+
+<h3>Logged in {{ user.username, id}}</h3>
+
+<div> Create calculation assignment 
+    <a class="nav-link" href="{{url_for('parents.createmodule',id=0)}}">Create assignment with calculation</a>
+</div>
+<div> Create text based assignment
+    <a class="nav-link" href="{{url_for('parents.createmodule',id=1)}}">Create assignment with text</a>
+</div>
+<hr>
+{% else %}
+<div> For Kids to login click this link
+    <a class="nav-link" href="{{url_for('kids.kidslogin')}}">Kids Login</a>
+</div>
+<hr>
+{% endif %}
+{% endblock content %}
+
+
+{% block content2 %}
+
+{% for kid, mod in module %}
+{{  mod.modulename }} <br>
+{% endfor %}
+
+{% endblock content2 %}

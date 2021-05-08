@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% if current_user.is_authenticated %}
+
+<h3>Logged in {{ user.username }}</h3>
+
+
+<div> For Kids to login click this link
+    <a class="nav-link" href="{{url_for('kids.kidslogin')}}">Kids Login</a>
+</div>
+<hr>
+<div> Register kids
+    <a class="nav-link" href="{{url_for('parents.registerkids')}}">Register Kids</a>
+</div>
+<hr>
+<div> Create calculation assignment 
+    <a class="nav-link" href="{{url_for('parents.createmodule',id=0)}}">Create assignment with calculation</a>
+</div>
+<div> Create text based assignment
+    <a class="nav-link" href="{{url_for('parents.createmodule',id=1)}}">Create assignment with text</a>
+</div>
+<hr>
+
+
+
+
+{% else %}
+<div> For Kids to login click this link
+    <a class="nav-link" href="{{url_for('kids.kidslogin')}}">Kids Login</a>
+</div>
+<hr>
+{% endif %}
+{% endblock content %}
+
+{% block content2 %}
+
+{% for kids, u in enrolled %}
+
+<li class="list-group-item list-group-item-light"><a href="{{url_for('parents.managekids',id= kids.id ) }}">{{ kids.kidsusername, kids.id }}</a></li>
+
+{% endfor %}
+{% endblock content2 %}
