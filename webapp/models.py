@@ -31,6 +31,10 @@ class Modules(db.Model):
     completed_module = db.Column(db.Integer, default=0)    
     registerkids_id = db.Column(db.Integer, db.ForeignKey('registerkids.id')) #, nullable=False)
 
+    def __repr__(self):
+        return f"Modules('{self.modulename}')"
+    
+
 class Assignmentcalc(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     field1 = db.Column(db.REAL)
@@ -40,6 +44,9 @@ class Assignmentcalc(db.Model):
     initiated_assignment = db.Column(db.Integer, default=0)
     completed_assignment = db.Column(db.Integer, default=0)
     module_id = db.Column(db.Integer, db.ForeignKey('modules.id')) #, nullable=False)
+
+    def __repr__(self):
+        return f"Assignmentcalc('{self.field1, self.operator, self.field2}')"
     
 class Assignmenttext(db.Model):
     id = db.Column(db.Integer, primary_key=True)

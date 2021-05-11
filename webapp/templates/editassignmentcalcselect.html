@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% if current_user.is_authenticated %}
+
+<h5>Logged in {{ user.username }}</h5>
+
+
+{{ id }}
+
+<div class="content-section">
+    <form method="POST" action="{{url_for('parents.editassignmentcalculationcomplete')}}">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+           
+            <legend class="border-bottom mb-4">Edit assignment</legend>     
+            
+            <div class="form-group">
+                {{ form.editfield1.label(class="form-control-label") }}
+                {% if form.editfield1.errors %}
+                    {{ form.editfield1(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.editfield1.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.editfield1(class="form-control form-control-lg", value=form.editfield1.default) }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.editoperator.label(class="form-control-label") }}
+                {% if form.editoperator.errors %}
+                    {{ form.editoperator(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.editoperator.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.editoperator(class="form-control form-control-lg",value=form.editoperator.default) }}
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.editfield2.label(class="form-control-label") }}
+                {% if form.editfield2.errors %}
+                    {{ form.editfield2(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.editfield2.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.editfield2(class="form-control form-control-lg",value=form.editfield2.default) }}
+                {% endif %}
+            </div>
+            
+        </fieldset>
+        <div class="form-group">
+            
+            {{ form.hiddenid(class="form-control form-control-lg", value=form.hiddenid.default)}}
+            {{ form.submit(class="btn btn-outline-info" ) }}           
+        </div>        
+        </form>        
+</div>
+
+
+{% endif %}
+{% endblock content %}
+
+
+{% block content2 %}
+
+assignment edit
+
+
+
+{% endblock content2 %}

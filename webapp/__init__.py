@@ -8,15 +8,13 @@ import os
 from dotenv import load_dotenv
 
 
-projectfolder = os.path.dirname(os.path.realpath(__file__))
-print(projectfolder)
+projectfolder = os.getcwd()
 load_dotenv(os.path.join(projectfolder, '.env'))
-
 SECRET_KEY = os.environ.get('SECRET_KEY')
 SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
-print(SECRET_KEY, SQLALCHEMY_DATABASE_URI)
 db = SQLAlchemy() 
 DB_NAME = "sqlitedatabase.db"
+
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login' # for login_required object used as a decorater
@@ -26,6 +24,7 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = SECRET_KEY        
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI 
+    
     bcrypt.init_app(app)
     login_manager.init_app(app)
     db.init_app(app)        

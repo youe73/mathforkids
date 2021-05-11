@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, request, url_for, flash, redirect
-from webapp.forms import RegisterKidsForm, CreateAssignmentCalculationForm, CreateAssignmentTextForm, CreateModuleForm
+from webapp.forms import RegisterKidsForm, CreateAssignmentCalculationForm, CreateAssignmentTextForm, CreateModuleForm, EditAssignmentCalculationForm
 from webapp.models import Users, Registerkids, Modules, Assignmentcalc, Assignmenttext
 from flask_login import login_user, current_user, logout_user, login_required
 from webapp import db
 
 parents = Blueprint('parents',__name__)
+
 
 @parents.route('/',methods=['GET','POST'])
 def home():         
@@ -38,12 +39,8 @@ def createmodule(id):
         print("authenticated" , current_user.id)  
         moduledisplay = "" 
         path = ""   
-        form = ""
-        if id == 0: # checking the module id
-            path = 'createassignmentcalculation'
-        else:
-            path = 'assignmenttext'
-        # check if kids are registered first otherwise redirect
+        form = ""                         
+        # check if kids are registered if not redirect
         reguserkid = db.session.query(Registerkids.id, Users).join(Users, Users.id == Registerkids.user_id).filter(Registerkids.user_id==current_user.id).all()
         print("regkid", reguserkid)
         id_regkid = 0
@@ -56,6 +53,12 @@ def createmodule(id):
         print("existing module", existmodule)
         if existmodule:
             moduledisplay = existmodule
+
+        if id == 0: 
+            path = 'createassignmentcalculation'
+        else:
+            path = 'assignmenttext'
+        
         form = CreateModuleForm()   
         if form.validate_on_submit():            
             getkidid = 0
@@ -130,15 +133,67 @@ def calculation_helper(a,operator,b):
         c = a/b
     return c 
 
+
+@parents.route('/editassignmentcalculationcomplete', methods=['POST'])
+def editassignmentcalculationcomplete():
+    if current_user.is_authenticated:
+        print(current_user.id)        
+        if request.method=="POST":
+            id = request.form.get("hiddenid")
+            print("hidden id ",id)
+            updateassignment = db.session.query(Assignmentcalc).filter(Assignmentcalc.id==id).first()
+            field1 = request.form.get("editfield1")
+            operator = request.form.get("editoperator")
+            field2 = request.form.get("editfield2")
+            result = calculation_helper(float(field1), operator, float(field2))                   
+            
+            print(field1)
+            print("toupdate ",updateassignment)
+            updateassignment.field1 = field1
+            updateassignment.operator = operator
+            updateassignment.field2 = field2
+            updateassignment.result = result
+            db.session.commit()
+            flash('Update completed','success')
+            return redirect(url_for('parents.home'))            
+    return render_template('editassignmentcalculationcomplete.html')
+
+
+
 @parents.route('/managekids/<int:id>', methods=['GET','POST'])
 def managekids(id):
-    if current_user.is_authenticated:
-        module = db.session.query(Registerkids, Modules).filter(Registerkids.id==id).all()
-        print(module)
-    
-    return render_template("managekids.html", user = current_user, id = id, module = module)
+    if current_user.is_authenticated:               
+        module = Modules.query.filter(Modules.registerkids_id==id).all()          
+        assignment = db.session.query(Assignmentcalc).all()
+        kids = Registerkids.query.filter(Registerkids.id==id).first()              
+    return render_template("managekids.html", user = current_user, id = id, module = module, kids = kids, assignment= assignment)
 
-     
+
+@parents.route('/editassignmentcalcselect', methods=['POST'])
+def editassignmentcalcselect():
+    if current_user.is_authenticated:
+        form = EditAssignmentCalculationForm()        
+        if request.method=="POST":
+            id = request.form.get("selectitem")
+            if id is not "0":                
+                assign = db.session.query(Assignmentcalc).filter(Assignmentcalc.id==id).all()                 
+                choicelist = form.editoperator.choices   
+                for attr in assign:  
+                    form.hiddenid.default=id                  
+                    form.editfield1.default=attr.field1                                        
+                    form.editoperator.choices = choicelist               
+                    form.editoperator.default= int(attr.operator)  
+                    form.editfield2.default=attr.field2                    
+                    form.process()                           
+            else:
+                return redirect(url_for('parents.home'))
+
+    return render_template("editassignmentcalcselect.html", user = current_user, id = id, form = form)
+
+
+
+
+
     
 
 

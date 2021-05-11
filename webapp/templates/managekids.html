@@ -3,7 +3,11 @@
 
 {% if current_user.is_authenticated %}
 
-<h3>Logged in {{ user.username, id}}</h3>
+<h5>Logged in {{ user.username, id}}</h5>
+
+
+<h3>Assignment Modules for {{ kids.kidsusername }} </h3><br>
+
 
 <div> Create calculation assignment 
     <a class="nav-link" href="{{url_for('parents.createmodule',id=0)}}">Create assignment with calculation</a>
@@ -22,9 +26,23 @@
 
 
 {% block content2 %}
+{% for mod in module %}
+<form action="{{url_for('parents.editassignmentcalcselect')}}", method="POST">   
+    
+        {{ mod.modulename }} <br>   
+        <select name="selectitem">  <option value=0>Select assignments for {{ mod.modulename }}</option>
+        {% for assign in assignment %}            
+            {% if mod.id==assign.module_id  %}                                     
+                <option value={{ assign.id }} >{{  assign.id, assign.field1, assign.operator, assign.field2 }}</option>    
+            {% endif %}               
+        {% endfor %}
+            </select>
+            <br>
+        
+    <input type="submit" value="Inspect">
+</form>
+{% endfor %}    
+<br>
 
-{% for kid, mod in module %}
-{{  mod.modulename }} <br>
-{% endfor %}
 
 {% endblock content2 %}

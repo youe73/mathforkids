@@ -1,8 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import Form, BooleanField, StringField, PasswordField, validators, SubmitField, IntegerField, FloatField, DecimalField,TextAreaField, SelectField
+from wtforms import Form, BooleanField, StringField, PasswordField, validators, SubmitField, IntegerField, FloatField, DecimalField,TextAreaField, SelectField, HiddenField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms_sqlalchemy.fields import QuerySelectField
 import email_validator
-from webapp.models import Users
+from webapp.models import db, Users, Assignmentcalc, Modules
+import webapp.parents 
 
 class SignupForm(FlaskForm):
     username = StringField('Username',validators=[DataRequired(), Length(min=2, max=20)])
@@ -44,10 +46,9 @@ class KidsLoginForm(FlaskForm):
 
 class CreateModuleForm(FlaskForm):
     modules = StringField('Module name',validators=[DataRequired()])
-    submit = SubmitField('Create Module')
+    submit = SubmitField('Create Module')   
 
         
-
 class CreateAssignmentCalculationForm(FlaskForm):
     field1 = FloatField('Field 1', validators=[DataRequired()])    
     operator = SelectField('Operator',choices=[(0,'+'),(1,'-'),(2,'*'),(3,'/')], validators=[DataRequired()])
@@ -60,6 +61,19 @@ class CreateAssignmentTextForm(FlaskForm):
     field = TextAreaField('field', validators=[DataRequired()])    
     result = FloatField('result',validators=[DataRequired()])
     submit = SubmitField('create')
+
+
+class EditAssignmentCalculationForm(FlaskForm): 
+    hiddenid = HiddenField('id')    
+    editfield1 = FloatField('editField 1', validators=[DataRequired()])    
+    editoperator = SelectField('editOperator',choices=[(0,'+'),(1,'-'),(2,'*'),(3,'/')], validators=[DataRequired()])
+    editfield2 = FloatField('editField 2', validators=[DataRequired()])
+    submit = SubmitField('Edit')
+
+
+
+
+
 
 """
 class KidsassignmentForm(FlaskForm):
